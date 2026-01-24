@@ -1,0 +1,37 @@
+{
+	"name": "@yiuseppedev/interface-generator",
+	"version": "1.0.0",
+	"description": "A library that generates a interface files based on a json answer",
+	"bin": {
+		"intgen": "./bin/index.js"
+	},
+	"files": [
+		"dist",
+		"bin"
+	],
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/JosephAnderson234/interface-generator.git"
+	},
+	"keywords": [
+		"interface",
+		"js",
+		"ts",
+		"generator"
+	],
+	"author": "JosephAnderson234",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/JosephAnderson234/interface-generator/issues"
+	},
+	"homepage": "https://github.com/JosephAnderson234/interface-generator#readme",
+	"dependencies": {
+		"commander": "^14.0.2"
+	},
+	"engines": {
+		"node": ">=18"
+	}
+}
