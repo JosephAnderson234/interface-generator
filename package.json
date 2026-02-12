@@ -1,6 +1,6 @@
 {
 	"name": "@yiuseppedev/interface-generator",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A library that generates a interface files based on a json answer",
 	"bin": {
 		"intgen": "./bin/index.js"
