@@ -3,10 +3,12 @@
 	"version": "1.1.0",
 	"description": "A library that generates a interface files based on a json answer",
 	"bin": {
-		"intgen": "./bin/index.js"
+		"intgen": "./bin/index.js",
+		"intgen-mcp": "./bin/mcp.js"
 	},
 	"files": [
-		"bin"
+		"bin",
+		"skills"
 	],
 	"scripts": {
 		"test": "node --test test/*.test.js"
@@ -19,7 +21,14 @@
 		"interface",
 		"js",
 		"ts",
-		"generator"
+		"generator",
+		"typescript",
+		"zod",
+		"json",
+		"codegen",
+		"mcp",
+		"claude",
+		"ai-agents"
 	],
 	"author": "JosephAnderson234",
 	"license": "MIT",

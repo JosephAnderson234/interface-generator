@@ -1,0 +1,11 @@
+{
+	"name": "intgen",
+	"description": "Generate TypeScript interfaces and Zod schemas from JSON (inline, file or URL). Ships a skill and an MCP server.",
+	"author": {
+		"name": "JosephAnderson234"
+	},
+	"homepage": "https://github.com/JosephAnderson234/interface-generator",
+	"repository": "https://github.com/JosephAnderson234/interface-generator",
+	"license": "MIT",
+	"keywords": ["typescript", "zod", "json", "codegen", "types"]
+}

@@ -14,10 +14,11 @@ program
 	.name("intgen")
 	.description("Generador de interfaces TypeScript desde JSON")
 	.version(pkg.version)
-	.option('-i, --input <path>', 'Ruta al archivo JSON')
+	.option('-i, --input <path>', 'Ruta al archivo JSON ("-" lee de stdin)')
 	.option('-u, --url <url>', 'URL para obtener el JSON')
 	.option('-m, --method <method>', 'Método HTTP para la URL', 'GET')
-	.option('-o, --output <path>', 'Ruta de salida (.ts o .d.ts)')
+	.option('-H, --header <header>', 'Header HTTP para la URL, formato "Nombre: valor" (repetible)', collectHeader, [])
+	.option('-o, --output <path>', 'Ruta de salida (.ts o .d.ts; "-" escribe a stdout)')
 	.option('-n, --name <name>', 'Nombre de la interfaz', 'GeneratedInterface')
 	.option('-c, --casing <mode>', 'Convención para las keys de salida (original|camel)', 'original')
 	.option('-s, --schema <kind>', 'Generar también un schema adicional junto a la interfaz (zod)')
@@ -31,26 +32,75 @@ program
 			const casing = options.casing === 'camel' ? 'camel' : 'original';
 			const output = generate(jsonData, { name: options.name, casing, schema: options.schema });
 
-			fs.writeFileSync(options.output, output);
-			console.log(`✓ Interfaz generada en ${options.output}`);
+			if (options.output === '-') {
+				process.stdout.write(output);
+			} else {
+				fs.writeFileSync(options.output, output);
+				console.log(`✓ Interfaz generada en ${options.output}`);
+			}
 		} catch (error) {
 			console.error(`Error: ${error.message}`);
 			process.exit(1);
 		}
 	});
 
+function collectHeader(value, previous) {
+	return previous.concat([value]);
+}
+
+// Accepts either an array of "Name: value" strings (CLI) or a plain
+// { Name: value } object (programmatic / MCP).
+function parseHeaders(headers) {
+	if (!headers) return {};
+	if (!Array.isArray(headers)) return { ...headers };
+	const result = {};
+	for (const raw of headers) {
+		const idx = raw.indexOf(':');
+		if (idx <= 0) throw new Error(`Header inválido "${raw}", usa el formato "Nombre: valor".`);
+		result[raw.slice(0, idx).trim()] = raw.slice(idx + 1).trim();
+	}
+	return result;
+}
+
+function readStdin() {
+	return new Promise((resolve, reject) => {
+		let data = '';
+		process.stdin.setEncoding('utf-8');
+		process.stdin.on('data', (chunk) => { data += chunk; });
+		process.stdin.on('end', () => resolve(data));
+		process.stdin.on('error', reject);
+	});
+}
+
+function parseJson(text, source) {
+	try {
+		return JSON.parse(text);
+	} catch (error) {
+		throw new Error(`El contenido de ${source} no es JSON válido: ${error.message}`);
+	}
+}
+
+// Resolves the JSON payload from exactly one source: a URL, a local file,
+// or stdin ("-"). Shared by the CLI and the MCP server.
 async function loadJsonData(options) {
 	if (options.url) {
-		const response = await fetch(options.url, { method: options.method });
+		const response = await fetch(options.url, {
+			method: options.method || 'GET',
+			headers: parseHeaders(options.header ?? options.headers),
+		});
 		if (!response.ok) {
 			throw new Error(`No se pudo obtener JSON (${response.status})`);
 		}
-		return response.json();
+		return parseJson(await response.text(), options.url);
+	}
+
+	if (options.input === '-') {
+		return parseJson(await readStdin(), 'stdin');
 	}
 
 	if (options.input) {
 		const jsonContent = fs.readFileSync(options.input, 'utf-8');
-		return JSON.parse(jsonContent);
+		return parseJson(jsonContent, options.input);
 	}
 
 	throw new Error('Debes indicar --input o --url');
@@ -325,4 +375,4 @@ if (require.main === module) {
 	program.parse();
 }
 
-module.exports = { generate };
+module.exports = { generate, loadJsonData };

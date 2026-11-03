@@ -1,0 +1,13 @@
+{
+	"name": "intgen",
+	"owner": {
+		"name": "JosephAnderson234"
+	},
+	"plugins": [
+		{
+			"name": "intgen",
+			"source": "./",
+			"description": "Generate TypeScript interfaces and Zod schemas from JSON (inline, file or URL)."
+		}
+	]
+}

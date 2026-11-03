@@ -1,0 +1,8 @@
+{
+	"mcpServers": {
+		"intgen": {
+			"command": "npx",
+			"args": ["-y", "-p", "@yiuseppedev/interface-generator", "intgen-mcp"]
+		}
+	}
+}
